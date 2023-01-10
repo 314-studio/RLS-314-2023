@@ -1,4 +1,6 @@
-using System;
+﻿using System;
+using System.Collections.Generic;
+using UnityEngine;
 
 namespace FrameworkDesign
 {
@@ -14,6 +16,7 @@ namespace FrameworkDesign
             }
             set
             {
+
                 if (!value.Equals(mValue))
                 {
                     mValue = value;
