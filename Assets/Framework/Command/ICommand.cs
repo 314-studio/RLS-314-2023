@@ -1,4 +1,4 @@
-namespace FrameworkDesign
+﻿namespace FrameworkDesign
 {
     public interface ICommand
     {
