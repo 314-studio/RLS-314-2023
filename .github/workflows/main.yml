@@ -1,0 +1,32 @@
+name: Main Workflow
+
+on:
+  create:
+    branches:
+    - RLS-*
+  pull_request:
+    branches:
+    - master
+
+env:
+ BRANCH_NAME: ${{ github.head_ref || github.ref_name }} 
+
+jobs:
+  trello_automation:
+    runs-on: ubuntu-latest
+    name: Trello Automation All
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Trello Automations
+        uses: 314-studio/314-trello-automation@main
+        id: p1
+        with:
+          trello-board-id: ${{ vars.TRELLO_BOARD_ID }}
+          trello-list-name-done: ${{ vars.TRELLO_LIST_NAME_DONE }}
+          trello-list-name-under-review: ${{ vars.TRELLO_LIST_NAME_UNDER_REVIEW }}
+          trello-list-name-in-progress: ${{ vars.TRELLO_LIST_NAME_IN_PROGRESS }}
+          trello-key: ${{ secrets.TRELLO_API_KEY }}
+          trello-token: ${{ secrets.TRELLO_TOKEN }}
+          trello-api-base: ${{ vars.TRELLO_API_BASE_URL }}
+          github-repo-token: ${{ secrets.GITHUB_TOKEN }}
