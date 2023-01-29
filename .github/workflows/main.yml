@@ -1,3 +1,5 @@
+name: Main Workflow
+
 on:
   create:
     branches:
@@ -10,9 +12,9 @@ env:
  BRANCH_NAME: ${{ github.head_ref || github.ref_name }} 
 
 jobs:
-  attach_pr_to_trello:
+  trello_automation:
     runs-on: ubuntu-latest
-    name: Trello Automation
+    name: Trello Automation All
     steps:
       - name: Checkout
         uses: actions/checkout@v3
