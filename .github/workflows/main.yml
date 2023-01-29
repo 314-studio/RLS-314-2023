@@ -14,7 +14,7 @@ env:
 jobs:
   trello_automation:
     runs-on: ubuntu-latest
-    name: Trello Automation All
+    name: Trello Automation
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -30,3 +30,41 @@ jobs:
           trello-token: ${{ secrets.TRELLO_TOKEN }}
           trello-api-base: ${{ vars.TRELLO_API_BASE_URL }}
           github-repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+  buildForAllSupportedPlatforms:
+    if: github.event_name == 'pull_request'
+    needs: trello_automation
+    name: Build for ${{ matrix.targetPlatform }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        targetPlatform:
+          # - StandaloneOSX # Build a macOS standalone (Intel 64-bit).
+          - StandaloneWindows # Build a Windows standalone.
+          # - StandaloneWindows64 # Build a Windows 64-bit standalone.
+          # - StandaloneLinux64 # Build a Linux 64-bit standalone.
+          # - iOS # Build an iOS player.
+          # - Android # Build an Android .apk standalone app.
+          - WebGL # WebGL.
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          lfs: true
+      - uses: actions/cache@v2
+        with:
+          path: Library
+          key: Library-${{ matrix.targetPlatform }}
+          restore-keys: Library-
+      - uses: game-ci/unity-builder@v2
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          targetPlatform: ${{ matrix.targetPlatform }}
+      - uses: actions/upload-artifact@v2
+        with:
+          name: Build-${{ matrix.targetPlatform }}
+          path: build/${{ matrix.targetPlatform }}
