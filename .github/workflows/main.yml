@@ -54,6 +54,7 @@ jobs:
           key: Library-${{ matrix.targetPlatform }}
           restore-keys: Library-
       - uses: game-ci/unity-builder@v2
+        id: buildGame
         env:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
@@ -62,7 +63,7 @@ jobs:
           targetPlatform: ${{ matrix.targetPlatform }}
           versioning: Semantic
           buildName: ${ BRANCH_NAME }
-      - run: echo 'Project Version: ${{ steps.myBuildStep.outputs.buildVersion }}'
+      - run: echo 'Project Version: ${{ steps.buildGame.outputs.buildVersion }}'
       - uses: actions/upload-artifact@v3
         with:
           name: Build-${{ matrix.targetPlatform }}
