@@ -63,8 +63,8 @@ jobs:
           targetPlatform: ${{ matrix.targetPlatform }}
           versioning: Semantic
           buildName: ${ BRANCH_NAME }
-      - run: echo 'Project Version: ${{ steps.buildGame.outputs.buildVersion }}'
-      - uses: actions/upload-artifact@v3
+      - run: echo "Project Version:${{ steps.buildGame.outputs.buildVersion }}"
+      - uses: actions/upload-artifact@v2
         with:
           name: Build-${{ matrix.targetPlatform }}
           path: build/${{ matrix.targetPlatform }}
