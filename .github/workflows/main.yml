@@ -56,6 +56,13 @@ jobs:
         with:
           name: ${{ env.FILE_NAME }}_${{ matrix.targetPlatform }}_v${{ steps.buildGame.outputs.buildVersion }}
           path: build/${{ matrix.targetPlatform }}
+      - name: Upload build
+        uses: fjogeleit/http-request-action@v1
+        with:
+          url: '${{ secrets.M2M_314_WORKFLOW_URL_BASE }}/upload'
+          method: 'POST'
+          customHeaders: '{"Content-Type": "multipart/form-data", "x-api-key": "${{ secrets.M2M_314_AUTOMATION_SECRET }}"}'
+          files: '{"file": "build/${{ matrix.targetPlatform }}"}'
   
   task-automation:
     needs: build
@@ -72,5 +79,5 @@ jobs:
           m2m-314-automation-base-url: ${{ secrets.M2M_314_WORKFLOW_URL_BASE }}
           trello-list-name-under-review: ${{ vars.TRELLO_LIST_NAME_UNDER_REVIEW }}
           trello-list-name-in-progress: ${{ vars.TRELLO_LIST_NAME_IN_PROGRESS }}
-          workflow-id: ${{ github.run_id }}
+          build-file-name: ${{ env.FILE_NAME }}
           build-version: ${{ needs.build.outputs.buildVersion }}
