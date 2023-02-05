@@ -30,6 +30,10 @@ jobs:
           # - Android # Build an Android .apk standalone app.
           # - WebGL # WebGL.
     steps:
+      - name: Replace invalid characters in branch name
+        run: |
+          echo "BRANCH_NAME=${BRANCH_NAME//\//_}" >> $GITHUB_ENV
+          echo "branch name ${BRANCH_NAME}"
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
@@ -52,7 +56,7 @@ jobs:
       - run: echo "ProjectVersion:${{ steps.buildGame.outputs.buildVersion }}"
       - uses: actions/upload-artifact@v2
         with:
-          name: Build-${{ env.BRANCH_NAME }}-v${{ env.BRANCH_NAME }}
+          name: Build-${{ env.BRANCH_NAME }}-v${{ steps.buildGame.outputs.buildVersion }}
           path: build/${{ matrix.targetPlatform }}
   
   task-automation:
