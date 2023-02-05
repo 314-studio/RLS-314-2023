@@ -18,6 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       buildVersion: ${{ steps.buildGame.outputs.buildVersion }}
+      filename: ${{ steps.zip.outputs.filename }}
     strategy:
       fail-fast: false
       matrix:
@@ -30,8 +31,8 @@ jobs:
           # - Android # Build an Android .apk standalone app.
           # - WebGL # WebGL.
     steps:
-      - name: Build file name
-        run: echo "FILE_NAME=${BRANCH_NAME//\//-}" >> $GITHUB_ENV
+      - name: Replace / to - in branch name
+        run: echo "BRANCH_NAME_N=${BRANCH_NAME//\//-}" >> $GITHUB_ENV
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
@@ -50,22 +51,21 @@ jobs:
         with:
           targetPlatform: ${{ matrix.targetPlatform }}
           versioning: Semantic
-          buildName: ${{ env.FILE_NAME }}
-      - run: echo "ProjectVersion:${{ steps.buildGame.outputs.buildVersion }}"
-      - name: Test outputs
-        run: |
-          echo '{"file": "${{ github.workspace }}/build/${{ matrix.targetPlatform }}"}'
-          pwd
+          buildName: ${{ env.BRANCH_NAME_N }}
+      - name: Build file name
+        run: echo "FILENAME=${{ env.BRANCH_NAME_N }}_${{ matrix.targetPlatform }}_v${{ steps.buildGame.outputs.buildVersion }}.zip" >> $GITHUB_ENV
       - name: Zip build files
+        id: zip
         run: |
-          zip -r ${{ env.FILE_NAME }}_${{ matrix.targetPlatform }}_v${{ steps.buildGame.outputs.buildVersion }}.zip build/${{ matrix.targetPlatform }}
+          zip -r ${{ env.FILENAME }} build/${{ matrix.targetPlatform }}
+          echo "filename=${{ env.FILENAME }}" >> $GITHUB_OUTPUT
       - name: Upload build
         run: |
           curl \
             -X POST \
             -H "Content-Type: multipart/form-data" \
             -H "x-api-key: ${{ secrets.M2M_314_AUTOMATION_SECRET }}" \
-            -F 'file=@${{ env.FILE_NAME }}_${{ matrix.targetPlatform }}_v${{ steps.buildGame.outputs.buildVersion }}.zip' \
+            -F 'file=@${{ env.FILENAME }}' \
             ${{ secrets.M2M_314_WORKFLOW_URL_BASE }}/upload  
   
   task-automation:
@@ -83,5 +83,5 @@ jobs:
           m2m-314-automation-base-url: ${{ secrets.M2M_314_WORKFLOW_URL_BASE }}
           trello-list-name-under-review: ${{ vars.TRELLO_LIST_NAME_UNDER_REVIEW }}
           trello-list-name-in-progress: ${{ vars.TRELLO_LIST_NAME_IN_PROGRESS }}
-          build-file-name: ${{ env.FILE_NAME }}
+          build-file-name: ${{ needs.build.outputs.filename }}
           build-version: ${{ needs.build.outputs.buildVersion }}
