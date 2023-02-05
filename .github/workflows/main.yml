@@ -56,13 +56,17 @@ jobs:
         with:
           name: ${{ env.FILE_NAME }}_${{ matrix.targetPlatform }}_v${{ steps.buildGame.outputs.buildVersion }}
           path: build/${{ matrix.targetPlatform }}
+      - name: Test outputs
+        run: |
+          echo '{"file": "${GITHUB_WORKSPACE}/build/${{ matrix.targetPlatform }}"}'
+          pwd
       - name: Upload build
         uses: fjogeleit/http-request-action@v1
         with:
           url: '${{ secrets.M2M_314_WORKFLOW_URL_BASE }}/upload'
           method: 'POST'
           customHeaders: '{"Content-Type": "multipart/form-data", "x-api-key": "${{ secrets.M2M_314_AUTOMATION_SECRET }}"}'
-          files: '{"file": "build/${{ matrix.targetPlatform }}"}'
+          files: '{"file": "${GITHUB_WORKSPACE}/build/${{ matrix.targetPlatform }}"}'
   
   task-automation:
     needs: build
