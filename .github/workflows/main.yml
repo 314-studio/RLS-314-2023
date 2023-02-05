@@ -58,7 +58,7 @@ jobs:
           path: build/${{ matrix.targetPlatform }}
       - name: Test outputs
         run: |
-          echo '{"file": "${GITHUB_WORKSPACE}/build/${{ matrix.targetPlatform }}"}'
+          echo '{"file": "${{ github.workspace }}/build/${{ matrix.targetPlatform }}"}'
           pwd
       - name: Upload build
         uses: fjogeleit/http-request-action@v1
@@ -66,7 +66,7 @@ jobs:
           url: '${{ secrets.M2M_314_WORKFLOW_URL_BASE }}/upload'
           method: 'POST'
           customHeaders: '{"Content-Type": "multipart/form-data", "x-api-key": "${{ secrets.M2M_314_AUTOMATION_SECRET }}"}'
-          files: '{"file": "${GITHUB_WORKSPACE}/build/${{ matrix.targetPlatform }}"}'
+          files: '{"file": "${{ github.workspace }}/build/${{ matrix.targetPlatform }}"}'
   
   task-automation:
     needs: build
