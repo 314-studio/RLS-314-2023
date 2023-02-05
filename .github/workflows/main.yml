@@ -52,21 +52,21 @@ jobs:
           versioning: Semantic
           buildName: ${{ env.FILE_NAME }}
       - run: echo "ProjectVersion:${{ steps.buildGame.outputs.buildVersion }}"
-      - uses: actions/upload-artifact@v2
-        with:
-          name: ${{ env.FILE_NAME }}_${{ matrix.targetPlatform }}_v${{ steps.buildGame.outputs.buildVersion }}
-          path: build/${{ matrix.targetPlatform }}
       - name: Test outputs
         run: |
           echo '{"file": "${{ github.workspace }}/build/${{ matrix.targetPlatform }}"}'
           pwd
+      - name: Zip build files
+        run: |
+          zip -r ${{ env.FILE_NAME }}_${{ matrix.targetPlatform }}_v${{ steps.buildGame.outputs.buildVersion }}.zip build/${{ matrix.targetPlatform }}
       - name: Upload build
-        uses: fjogeleit/http-request-action@v1
-        with:
-          url: '${{ secrets.M2M_314_WORKFLOW_URL_BASE }}/upload'
-          method: 'POST'
-          customHeaders: '{"Content-Type": "multipart/form-data", "x-api-key": "${{ secrets.M2M_314_AUTOMATION_SECRET }}"}'
-          files: '{"file": "${{ github.workspace }}/build/${{ matrix.targetPlatform }}"}'
+        run: |
+          curl \
+            -X POST \
+            -H "Content-Type: multipart/form-data" \
+            -H "x-api-key: ${{ secrets.M2M_314_AUTOMATION_SECRET }}" \
+            -F 'file=@${{ env.FILE_NAME }}_${{ matrix.targetPlatform }}_v${{ steps.buildGame.outputs.buildVersion }}.zip' \
+            ${{ secrets.M2M_314_WORKFLOW_URL_BASE }}/upload  
   
   task-automation:
     needs: build
