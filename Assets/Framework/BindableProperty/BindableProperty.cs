@@ -16,8 +16,8 @@ namespace FrameworkDesign
             }
             set
             {
-
-                if (!value.Equals(mValue))
+                
+                if(!value.Equals(mValue))
                 {
                     mValue = value;
                 }
