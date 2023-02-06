@@ -1,0 +1,87 @@
+name: RLS-314-2023 CI/CD
+
+on:
+  create:
+    branches:
+    - RLS-*
+  pull_request:
+    branches:
+    - master
+
+env:
+ BRANCH_NAME: ${{ github.head_ref || github.ref_name }} 
+
+jobs:
+  build:
+    if: github.event_name == 'pull_request'
+    name: Build for ${{ matrix.targetPlatform }}
+    runs-on: ubuntu-latest
+    outputs:
+      buildVersion: ${{ steps.buildGame.outputs.buildVersion }}
+      filename: ${{ steps.zip.outputs.filename }}
+    strategy:
+      fail-fast: false
+      matrix:
+        targetPlatform:
+          - StandaloneWindows # Build a Windows standalone.
+          # - StandaloneOSX # Build a macOS standalone (Intel 64-bit).
+          # - StandaloneWindows64 # Build a Windows 64-bit standalone.
+          # - StandaloneLinux64 # Build a Linux 64-bit standalone.
+          # - iOS # Build an iOS player.
+          # - Android # Build an Android .apk standalone app.
+          # - WebGL # WebGL.
+    steps:
+      - name: Replace / to - in branch name
+        run: echo "BRANCH_NAME_N=${BRANCH_NAME//\//-}" >> $GITHUB_ENV
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          lfs: true
+      - uses: actions/cache@v2
+        with:
+          path: Library
+          key: Library-${{ matrix.targetPlatform }}
+          restore-keys: Library-
+      - uses: game-ci/unity-builder@v2
+        id: buildGame
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          targetPlatform: ${{ matrix.targetPlatform }}
+          versioning: Semantic
+          buildName: ${{ env.BRANCH_NAME_N }}
+      - name: Build file name
+        run: echo "FILENAME=${{ env.BRANCH_NAME_N }}_${{ matrix.targetPlatform }}_v${{ steps.buildGame.outputs.buildVersion }}.zip" >> $GITHUB_ENV
+      - name: Zip build files
+        id: zip
+        run: |
+          zip -r ${{ env.FILENAME }} build/${{ matrix.targetPlatform }}
+          echo "filename=${{ env.FILENAME }}" >> $GITHUB_OUTPUT
+      - name: Upload build
+        run: |
+          curl \
+            -X POST \
+            -H "Content-Type: multipart/form-data" \
+            -H "x-api-key: ${{ secrets.M2M_314_AUTOMATION_SECRET }}" \
+            -F 'file=@${{ env.FILENAME }}' \
+            ${{ secrets.M2M_314_WORKFLOW_URL_BASE }}/upload  
+  
+  task-automation:
+    needs: build
+    runs-on: ubuntu-latest
+    name: Post Task Automation
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Task Automation
+        uses: 314-studio/314-automation@main
+        id: j1p1
+        with:
+          m2m-314-automation-secret: ${{ secrets.M2M_314_AUTOMATION_SECRET }}
+          m2m-314-automation-base-url: ${{ secrets.M2M_314_WORKFLOW_URL_BASE }}
+          trello-list-name-under-review: ${{ vars.TRELLO_LIST_NAME_UNDER_REVIEW }}
+          trello-list-name-in-progress: ${{ vars.TRELLO_LIST_NAME_IN_PROGRESS }}
+          build-file-name: ${{ needs.build.outputs.filename }}
+          build-version: ${{ needs.build.outputs.buildVersion }}
