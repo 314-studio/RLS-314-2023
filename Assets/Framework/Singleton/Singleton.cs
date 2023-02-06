@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace FrameworkDesign
 {
-    public class Singleton<T> where T : Singleton<T>
+    public class Singleton<T> where T :Singleton<T>
     {
 
         private static T mInstance;
@@ -12,14 +12,14 @@ namespace FrameworkDesign
         {
             get
             {
-                if (mInstance == null)
+                if(mInstance==null)
                 {
                     var type = typeof(T);
                     var constructInfo = type.GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic);
 
                     var ctor = Array.Find(constructInfo, c => c.GetParameters().Length == 0);
 
-                    if (ctor == null)
+                    if(ctor == null)
                     {
                         throw new Exception("Non Public Constructor Not Found in" + type.Name);
                     }

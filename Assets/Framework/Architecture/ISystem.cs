@@ -1,11 +1,11 @@
-﻿namespace FrameworkDesign
+namespace FrameworkDesign
 {
-    public interface IModel : IBelongToArchitecture, ICanSetArchitecture, ICanGetUtility,ICanSendEvent
+    public interface ISystem : IBelongToArchitecture, ICanSetArchitecture, ICanGetModel, ICanGetUtility,ICanRegisterEvent,ICanSendEvent
     {
         void Init();
     }
 
-    public abstract class AbstractModel : IModel
+    public abstract class AbstractSystem : ISystem
     {
         private IArchitecture mArchitecture;
 
@@ -19,7 +19,7 @@
             mArchitecture = architecture;
         }
 
-        void IModel.Init()
+        void ISystem.Init()
         {
             OnInit();
         }
