@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Src.GridSystem
 {
-    internal class Grid<TGridObject>
+    public class Grid<TGridObject> : IGrid<TGridObject>
     {
         private int _width;
         private int _depth;
@@ -31,7 +31,7 @@ namespace Src.GridSystem
             _gridArray = new TGridObject[width, depth];
         }
 
-        public void GetSize(out int width, out int depth)
+        public void GetGridSize(out int width, out int depth)
         {
             width = _width;
             depth = _depth;
@@ -42,7 +42,7 @@ namespace Src.GridSystem
             return _cellSize;
         }
 
-        public void SetValue(int x, int z, TGridObject value)
+        public virtual void SetValue(int x, int z, TGridObject value)
         {
             if (x >= 0 && z >= 0 && x < _width && z < _depth)
             {
