@@ -23,7 +23,7 @@ namespace Src.GridSystem
         {
             if (_grid == null) return;
 
-            _grid.GetSize(out var width, out var depth);
+            _grid.GetGridSize(out var width, out var depth);
             Gizmos.color = Color.white;
             for (var x = 0; x < width; x++)
             for (var z = 0; z < depth; z++)
