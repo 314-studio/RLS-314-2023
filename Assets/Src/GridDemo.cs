@@ -28,12 +28,11 @@ namespace Src
 
             _gridMap = new GridMap(gridWidth, gridDepth, gridCellSize, Vector3.zero);
             _editModeTower = Instantiate(turrentTower);
-            Debug.Log(_editModeTower.GetType());
         }
 
         public void Update()
         {
-            if (Input.GetKeyUp("space"))
+            if (Input.GetKeyUp(KeyCode.Space))
             {
                 _editMode = !_editMode;
             }
@@ -43,13 +42,31 @@ namespace Src
                 var cameraTransform = Camera.main.transform;
                 if (!Physics.Raycast(cameraTransform.position, cameraTransform.forward, out var hit, 100.0f))
                     return;
+                
+                _gridMap.GetGridPosition(hit.point, out var x, out var z);
 
-                Vector3 currentGridCellCenter = _gridMap.GetCellOrigin(hit.point);
+                Vector3 currentGridCellCenter = _gridMap.GetCellOrigin(x, z);
                 _editModeTower.transform.position = currentGridCellCenter;
                 
                 if (Input.GetKeyUp(KeyCode.P))
                 {
-                    // _gridMap.SetValue(hit.point, );
+                    GameObject obj = _gridMap.GetValue(_editModeTower.tag, x, z);
+                    if (!obj)
+                    {
+                        GameObject newTower = Instantiate(turrentTower, currentGridCellCenter, new Quaternion());
+                        Debug.Log("放置新的对象，tag为：" + newTower.tag);
+                        _gridMap.SetValue(x, z, newTower);
+                    };
+                }
+
+                if (Input.GetKeyUp(KeyCode.Backspace))
+                {
+                    GameObject obj = _gridMap.GetValue(_editModeTower.tag, x, z);
+                    if (obj)
+                    {
+                        Destroy(obj);
+                        Debug.Log("删除了对象，tag为：" + obj.tag);
+                    }
                 }
             }
             

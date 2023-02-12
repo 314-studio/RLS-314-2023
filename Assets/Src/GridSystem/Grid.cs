@@ -2,7 +2,7 @@
 
 namespace Src.GridSystem
 {
-    public class Grid<TGridItem> where TGridItem : IGridItem
+    public class Grid<TGridItem>
     {
         private readonly int _width;
         private readonly int _depth;
