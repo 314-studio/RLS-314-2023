@@ -69,7 +69,10 @@ jobs:
             ${{ secrets.M2M_314_WORKFLOW_URL_BASE }}/upload  
   
   task-automation:
-    needs: build
+    needs: [build]
+    if: |
+      always() && 
+      (needs.build.result == 'success' || needs.test-1.result == 'skipped')
     runs-on: ubuntu-latest
     name: Post Task Automation
     steps:
