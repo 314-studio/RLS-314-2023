@@ -2,6 +2,6 @@ namespace Src.GridSystem
 {
     public interface IGridItem
     {
-        public string GetClassName();
+        public string Type => GetType().Name;
     }
 }
