@@ -465,8 +465,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 181, y: -32}
-  m_SizeDelta: {x: 350, y: 50}
+  m_AnchoredPosition: {x: 390.5, y: -32}
+  m_SizeDelta: {x: 519, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1022890615
 MonoBehaviour:
@@ -520,8 +520,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 20
-  m_fontSizeBase: 20
+  m_fontSize: 30
+  m_fontSizeBase: 30
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -684,4 +684,4 @@ MonoBehaviour:
   gridWidth: 20
   gridDepth: 20
   gridCellSize: 4
-  turrentTower: {fileID: 1326093064322132, guid: a425124410f363a43adb6788601cc3e0, type: 3}
+  turretTower: {fileID: 1326093064322132, guid: a425124410f363a43adb6788601cc3e0, type: 3}
