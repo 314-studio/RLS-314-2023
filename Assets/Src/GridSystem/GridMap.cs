@@ -30,7 +30,7 @@ namespace Src.GridSystem
             _gridOrigin = gridOrigin;
             _defaultGrid = new GameObject();
             _gridMap = new Dictionary<string, Grid<GameObject>>();
-            
+
             CreateGridIfNull(_defaultGrid.tag);
         }
 
@@ -162,7 +162,7 @@ namespace Src.GridSystem
         {
             return _gridMap[_defaultGrid.tag].GetCellOrigin(worldPosition);
         }
-        
+
         /// <summary>
         /// 创建一个网格层
         /// </summary>

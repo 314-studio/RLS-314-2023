@@ -1,6 +1,7 @@
 using System;
 using Src.GridSystem;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Src
 {
@@ -12,56 +13,52 @@ namespace Src
 
         [SerializeField] private float gridCellSize = 0.2f;
 
-        [Space] [SerializeField]
-        private GameObject turrentTower;
+        [Space] [SerializeField] private GameObject turretTower;
 
         private GridMap _gridMap;
-        private Boolean _editMode;
+        private bool _editMode;
         private GameObject _editModeTower;
 
         public void Start()
         {
-            Vector3 planeSize = gameObject.GetComponent<MeshRenderer>().bounds.size;
-            Vector3 planeScale = new Vector3(gridWidth * gridCellSize / planeSize.x, 0.02f,
+            var planeSize = gameObject.GetComponent<MeshRenderer>().bounds.size;
+            var planeScale = new Vector3(gridWidth * gridCellSize / planeSize.x, 0.02f,
                 gridDepth * gridCellSize / planeSize.z);
             gameObject.transform.localScale = planeScale;
 
             _gridMap = new GridMap(gridWidth, gridDepth, gridCellSize, Vector3.zero);
-            _editModeTower = Instantiate(turrentTower);
+            _editModeTower = Instantiate(turretTower);
         }
 
         public void Update()
         {
-            if (Input.GetKeyUp(KeyCode.Space))
-            {
-                _editMode = !_editMode;
-            }
+            if (Input.GetKeyUp(KeyCode.Space)) _editMode = !_editMode;
 
             if (_editMode)
             {
                 var cameraTransform = Camera.main.transform;
                 if (!Physics.Raycast(cameraTransform.position, cameraTransform.forward, out var hit, 100.0f))
                     return;
-                
+
                 _gridMap.GetGridPosition(hit.point, out var x, out var z);
 
-                Vector3 currentGridCellCenter = _gridMap.GetCellOrigin(x, z);
+                var currentGridCellCenter = _gridMap.GetCellOrigin(x, z);
                 _editModeTower.transform.position = currentGridCellCenter;
-                
+
                 if (Input.GetKeyUp(KeyCode.P))
                 {
-                    GameObject obj = _gridMap.GetValue(_editModeTower.tag, x, z);
+                    var obj = _gridMap.GetValue(_editModeTower.tag, x, z);
                     if (!obj)
                     {
-                        GameObject newTower = Instantiate(turrentTower, currentGridCellCenter, new Quaternion());
+                        var newTower = Instantiate(turretTower, currentGridCellCenter, new Quaternion());
                         Debug.Log("放置新的对象，tag为：" + newTower.tag);
                         _gridMap.SetValue(x, z, newTower);
-                    };
+                    }
                 }
 
                 if (Input.GetKeyUp(KeyCode.Backspace))
                 {
-                    GameObject obj = _gridMap.GetValue(_editModeTower.tag, x, z);
+                    var obj = _gridMap.GetValue(_editModeTower.tag, x, z);
                     if (obj)
                     {
                         Destroy(obj);
@@ -69,8 +66,6 @@ namespace Src
                     }
                 }
             }
-            
-            
         }
 
         private void OnDrawGizmos()
