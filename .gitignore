@@ -76,3 +76,6 @@ crashlytics-build.properties
 
 # Test artificts
 /artifacts
+
+# MacOS system files
+*.DS_Store

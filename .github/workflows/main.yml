@@ -37,6 +37,8 @@ jobs:
         with:
           fetch-depth: 0
           lfs: true
+      - name: Checkout LFS objects
+        run: git lfs pull
       - uses: actions/cache@v2
         with:
           path: Library
