@@ -1,0 +1,12 @@
+{
+	"Tool": "github.com/davyxu/tabtoy",
+	"Version": "2.9.1",
+	"GoodConfig":[
+		{ "ID": 12100001, "Name": "test1", "Desc": "这是一个防御塔", "IconName": "12100001", "Model": "test1", "UnlockType": 0, "GoodTypeID": 2, "QuaID": 1, "SellFlag": 500, "UseCondition": 1, "ExistTimeType": 0, "ExistTimeValue": 1 }
+	], 
+	"LanguageData":[
+		{ "ID": 1000, "CN": "开始游戏" }
+	], 
+	"Tower":[
+		{ "ID": 1 }
+	]}
