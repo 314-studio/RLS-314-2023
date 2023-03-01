@@ -23,36 +23,73 @@ namespace Src.GridSystem
         {
             return _gridArray;
         }
-        
-        public void SetValue(int x, int z, T value)
+
+        public void GetGridSize(out int width, out int depth)
         {
-            if (x >= 0 && z >= 0 && x < _width && z < _depth) _gridArray[x, z] = value;
+            width = _width;
+            depth = _depth;
+        }
+        
+        public void SetValue(int x, int y, T value)
+        {
+            if (x >= 0 && y >= 0 && x < _width && y < _depth) _gridArray[x, y] = value;
         }
         
         public void SetValue(Vector3 worldPosition, T value)
         {
-            GetGridPosition(worldPosition, out var x, out var z);
-            SetValue(x, z, value);
+            GetGridPosition(worldPosition, out var x, out var y);
+            SetValue(x, y, value);
+        }
+
+        public void SetValueMultiple(int startX, int startY, int expendX, int expendY, T value)
+        {
+            for (var x = 0; x < expendX; x++)
+            {
+                for (var y = 0; y < expendY; y++)
+                {
+                    SetValue(x + startX, y + startY, value);
+                }
+            }
         }
         
-        public T GetValue(int x, int z)
+        public T GetValue(int x, int y)
         {
-            if (x >= 0 && z >= 0 && x < _width && z < _depth)
-                return _gridArray[x, z];
+            if (x >= 0 && y >= 0 && x < _width && y < _depth)
+                return _gridArray[x, y];
             else
                 return default;
         }
         
         public T GetValue(Vector3 worldPosition)
         {
-            GetGridPosition(worldPosition, out var x, out var z);
-            return GetValue(x, z);
+            GetGridPosition(worldPosition, out var x, out var y);
+            Debug.Log(x.ToString() + y.ToString());
+            return GetValue(x, y);
+        }
+
+        public T[,] GetValueMultiple(int startX, int startY, int expandX, int expandY)
+        {
+            // Debug.Log($"start x {startX} y {startY}, expand x {expandX} y {expandY}");
+            if (startX < 0 || startY < 0 || expandX < 1 || expandY < 1)
+            {
+                return null;
+            }
+            T[,] tArray = new T[expandX, expandY];
+            for (var x = 0; x < expandX; x++)
+            {
+                for (var y = 0; y < expandY; y++)
+                {
+                    tArray[x, y] = GetValue(x + startX, y + startY);
+                }
+            }
+
+            return tArray;
         }
         
-        public void GetGridPosition(Vector3 worldPosition, out int x, out int z)
+        public void GetGridPosition(Vector3 worldPosition, out int x, out int y)
         {
             x = Mathf.FloorToInt((worldPosition - _gridLeftBottom).x / _cellSize);
-            z = Mathf.FloorToInt((worldPosition - _gridLeftBottom).z / _cellSize);
+            y = Mathf.FloorToInt((worldPosition - _gridLeftBottom).z / _cellSize);
         }
     }
 }
