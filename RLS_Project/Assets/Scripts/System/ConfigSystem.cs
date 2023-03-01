@@ -36,17 +36,7 @@ public class ConfigSystem : AbstractSystem, IConfigSystem
             SetLanguage(currentLanguage);
         });
 
-        //LoadConfig();
-        //try 
-        //{
-        //    SetLanguage(string.IsNullOrEmpty(this.GetModel<ISettingsModel>().Language)
-        //        ? currentLanguage : this.GetModel<ISettingsModel>().Language);
-        //}
-        //catch (Exception e)
-        //{
-        //    Console.WriteLine(e);
-        //    SetLanguage(currentLanguage);
-        //}
+
         //临时设置，后续需要改,根据设置系统动态更改游戏语言——Wildness
         LoadConfig("config.bin",LoadConfigComplete);
         
@@ -58,7 +48,10 @@ public class ConfigSystem : AbstractSystem, IConfigSystem
     public void LoadConfig(string cfgName, Action<Config> onLoaded)
     {
         string configPath = Path.Combine(Path.Combine(Application.streamingAssetsPath, "Configs"), cfgName);
-        CoroutineController.Instance.StartCoroutine(LoadConfigByWWW(configPath, onLoaded));
+        if(CoroutineController.Instance != null)
+        {
+            CoroutineController.Instance.StartCoroutine(LoadConfigByWWW(configPath, onLoaded));
+        }        
     }
 
     private void LoadConfigComplete(Config cfg)

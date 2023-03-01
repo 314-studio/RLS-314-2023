@@ -9,6 +9,7 @@ public class CoroutineController : MonoBehaviour
 
     private void Awake()
     {
+        DebugTool.LogWithHexColor("CoroutineController Awake");
         if (Instance == null)
         {
             DontDestroyOnLoad(gameObject);

@@ -5,13 +5,13 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
-    path: Assets/Scenes/SampleScene.unity
-    guid: 9fc0d4010bbf28b4594072e72b8655ab
   - enabled: 1
-    path: Assets/Plugins/QFramework/Framework/Examples/10.ShootingEditor2D/Scenes/GameStart.unity
-    guid: 3419c7cc39a03417fb3db1f1cd2416f0
+    path: Assets/Scenes/Login.unity
+    guid: 00db4979b927d7d46b8761f5189e2989
   - enabled: 1
-    path: Assets/Plugins/QFramework/Framework/Examples/10.ShootingEditor2D/Scenes/Game.unity
-    guid: 821e06d1dd865fc4eb5d5795ab633563
+    path: Assets/Scenes/Loading.unity
+    guid: a0f97a96bf2fa7f459fc97ee7bb237c4
+  - enabled: 1
+    path: Assets/Scenes/MainGame.unity
+    guid: 3465e32ad84e08c469f48f0b6c070b95
   m_configObjects: {}
