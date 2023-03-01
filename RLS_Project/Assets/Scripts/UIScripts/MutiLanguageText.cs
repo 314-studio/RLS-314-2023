@@ -13,6 +13,7 @@ public class MutiLanguageText : MonoBehaviour, IController
 
     void Start()
     {
+        DebugTool.LogWithHexColor("MutiLanguageText Start");
         showText = GetComponent<Text>();
         this.GetSystem<IConfigSystem>().RegisterText(this);
     }
@@ -28,6 +29,7 @@ public class MutiLanguageText : MonoBehaviour, IController
 
     private void OnEnable()
     {
+        DebugTool.LogWithHexColor("MutiLanguageText OnEnable");
         if (this.GetSystem<IConfigSystem>() != null)
             Reset();
     }
