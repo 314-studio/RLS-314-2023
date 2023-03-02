@@ -29,8 +29,6 @@ public class ConfigSystem : AbstractSystem, IConfigSystem
     protected override void OnInit()
     {
         //this.GetModel<ISettingsModel>().Language
-        DebugTool.LogWithHexColor("ConfigSystem:OnInit");
-
         this.RegisterEvent<ChangeSettingEvent>((e) =>
         {
             SetLanguage(currentLanguage);
@@ -101,17 +99,13 @@ public class ConfigSystem : AbstractSystem, IConfigSystem
             LanguageDataDefine temp = tableData.LanguageData[i];
             FieldInfo slot = temp.GetType().GetField(currentLanguage);
             string s = (string)slot.GetValue(temp);
-            DebugTool.LogWithHexColor("SetLanguage:" + tableData.LanguageData[i].ID);
-            DebugTool.LogWithHexColor("GetText:"+ s);
             currentLanguages.Add(tableData.LanguageData[i].ID, s);
         }
-        DebugTool.LogWithHexColor(currentLanguages.Count);
         RefreshAllText();
     }
 
     void RefreshAllText()
     {
-        DebugTool.LogWithHexColor("RefreshAllText");
         MutiLanguageText[] arr = allTexts.ToArray();
         foreach (MutiLanguageText i in arr)
         {
@@ -131,14 +125,13 @@ public class ConfigSystem : AbstractSystem, IConfigSystem
 
     public string GetText(int key)
     {
-        DebugTool.LogWithHexColor("GetText");
         if (currentLanguages.ContainsKey(key))
         {
             return currentLanguages[key];
         }
         else
         {
-            Debug.LogError("没有key是 [ " + key + "]   |的翻译");
+            //Debug.LogError("没有key是 [ " + key + "]   |的翻译");
             return "";
         }
 
@@ -146,7 +139,6 @@ public class ConfigSystem : AbstractSystem, IConfigSystem
 
     public void RegisterText(MutiLanguageText t)
     {
-        DebugTool.LogWithHexColor("RegisterText");
         allTexts.Add(t);
         t.Reset();
     }
