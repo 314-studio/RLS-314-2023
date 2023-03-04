@@ -63,7 +63,6 @@ namespace Src.GridSystem
         public T GetValue(Vector3 worldPosition)
         {
             GetGridPosition(worldPosition, out var x, out var y);
-            Debug.Log(x.ToString() + y.ToString());
             return GetValue(x, y);
         }
 
@@ -90,6 +89,13 @@ namespace Src.GridSystem
         {
             x = Mathf.FloorToInt((worldPosition - _gridLeftBottom).x / _cellSize);
             y = Mathf.FloorToInt((worldPosition - _gridLeftBottom).z / _cellSize);
+        }
+
+        public void GetGridPositionWithOffset(Vector3 worldPosition, Vector3 offset, out int x, out int y)
+        {
+            var pos = worldPosition - _gridLeftBottom - offset;
+            x = Mathf.FloorToInt(pos.x / _cellSize);
+            y = Mathf.FloorToInt(pos.z / _cellSize);
         }
     }
 }

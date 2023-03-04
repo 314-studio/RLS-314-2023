@@ -91,32 +91,39 @@ namespace Src.GridSystem
             out GridAvailability availability)
         {
             var canPlace = true;
-            var itemLeftBottomPosition = position - new Vector3(sizeOnGrid.x * CellSize / 2, 0,
-                sizeOnGrid.y * CellSize / 2);
-            var gridPosition = GetGridPosition(itemLeftBottomPosition);
-            var leftBottomCellOrigin = GetCellOrigin(gridPosition.x, gridPosition.y);
-            var offset = itemLeftBottomPosition - leftBottomCellOrigin;
-            var origin = new Vector3(Mathf.Sign(offset.x) * CellSize / 2, 0,
-                Mathf.Sign(offset.z) * CellSize / 2) - offset + position;
 
-            var occupiedCells = new List<GridCell>();
+            var offset = CalculateOffset(sizeOnGrid);
+            var gridPosition = GetGridPositionWithOffset(position, offset);
+            var startingGridPosition = gridPosition - (
+                new Vector2Int(Mathf.FloorToInt(sizeOnGrid.x / 2.0f),
+                    Mathf.FloorToInt(sizeOnGrid.y / 2.0f)) -
+                Vector2Int.one + new Vector2Int(sizeOnGrid.x % 2, sizeOnGrid.y % 2));
+            var origin = GetOriginWithOffset(position, offset);
+
+            var overlappedItems = new Dictionary<GridItem, List<Vector2Int>>();
             var itemArray = _gridDict[layer]
-                .GetValueMultiple(gridPosition.x, gridPosition.y, sizeOnGrid.x, sizeOnGrid.y);
+                .GetValueMultiple(startingGridPosition.x, startingGridPosition.y, sizeOnGrid.x, sizeOnGrid.y);
             for (var x = 0; x < sizeOnGrid.x; x++)
             {
                 for (var y = 0; y < sizeOnGrid.y; y++)
                 {
-                    if (itemArray[x, y])
+                    var item = itemArray[x, y];
+                    if (item)
                     {
-                        occupiedCells.Add(new GridCell(new Vector2Int(gridPosition.x + x, gridPosition.y + y),
-                            itemArray[x, y]));
+                        if (!overlappedItems.ContainsKey(item))
+                        {
+                            overlappedItems[item] = new List<Vector2Int>();
+                        }
+
+                        overlappedItems[item]
+                            .Add(new Vector2Int(startingGridPosition.x + x, startingGridPosition.y + y));
                         canPlace = false;
                     }
                 }
             }
 
-            availability = new GridAvailability(layer, sizeOnGrid, origin, gridPosition, leftBottomCellOrigin,
-                occupiedCells);
+            availability = new GridAvailability(layer, sizeOnGrid, origin, startingGridPosition,
+                overlappedItems);
 
             return canPlace;
         }
@@ -184,6 +191,38 @@ namespace Src.GridSystem
         }
 
         #region Generic Grid Calculation
+
+        public Vector3 GetOrigin(Vector3 position, Vector2Int sizeOnGrid)
+        {
+            return GetOriginWithOffset(position, CalculateOffset(sizeOnGrid));
+        }
+
+        private Vector3 CalculateOffset(Vector2Int sizeOnGrid)
+        {
+            return (Vector3.one - new Vector3(sizeOnGrid.x % 2, 1, sizeOnGrid.y % 2)) * HalfCellSize;
+        }
+
+        private Vector3 GetOriginWithOffset(Vector3 worldPosition, Vector3 offset)
+        {
+            var gridPosition = GetGridPositionWithOffset(worldPosition, offset);
+            return GetOriginWithOffset(gridPosition.x, gridPosition.y, offset);
+        }
+
+        private Vector3 GetOriginWithOffset(int x, int z, Vector3 offset)
+        {
+            return GetLeftBottomWithOffset(x, z, offset) + new Vector3(HalfCellSize, 0, HalfCellSize);
+        }
+
+        private Vector3 GetLeftBottomWithOffset(int x, int z, Vector3 offset)
+        {
+            return new Vector3(x, 0, z) * CellSize + _gridLeftBottom + offset;
+        }
+
+        private Vector2Int GetGridPositionWithOffset(Vector3 worldPosition, Vector3 offset)
+        {
+            _defaultGrid.GetGridPositionWithOffset(worldPosition, offset, out var x, out var z);
+            return new Vector2Int(x, z);
+        }
 
         private Vector2Int GetGridPosition(Vector3 worldPosition)
         {

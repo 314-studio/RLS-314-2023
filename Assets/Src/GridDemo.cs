@@ -1,7 +1,4 @@
-using System;
-using System.Collections.Generic;
 using Src.GridSystem;
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Src
@@ -34,19 +31,26 @@ namespace Src
             if (!_selectedItem.GetAvailability(mouseWorldPosition, out var availability))
             {
                 Gizmos.color = Color.red;
-                var cells = availability.occupiedCells;
-                foreach (var cell in cells)
+                var items = availability.overlappedItems;
+                foreach (var item in items.Keys)
                 {
-                    Gizmos.DrawCube(cell.origin, new Vector3(GridManager.CellSize, 0.1f, GridManager.CellSize));
+                    foreach (var pos in availability.overlappedItems[item])
+                    {
+                        Gizmos.DrawCube(_gridManager.GetCellOrigin(pos.x, pos.y), new Vector3(GridManager.CellSize, 0.1f, GridManager.CellSize));
+                    }
                 }
             }
 
             mouseWorldPosition.y = 0;
-            _selectedItem.transform.position = availability.origin;
+            _selectedItem.transform.position = _gridManager.GetOrigin(mouseHit.point, _selectedItem.sizeOnGrid);
         }
 
         private void Update()
         {
+            if (Input.GetKeyUp(KeyCode.K))
+            {
+                var a = 1;
+            }
             if (Input.GetKeyUp(KeyCode.Space))
             {
                 _editMode = !_editMode;
