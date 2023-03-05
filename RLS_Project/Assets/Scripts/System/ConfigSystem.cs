@@ -34,7 +34,7 @@ public class ConfigSystem : AbstractSystem, IConfigSystem
             SetLanguage(currentLanguage);
         });
 
-
+        DebugTool.LogWithHexColor("OnInit");
         //临时设置，后续需要改,根据设置系统动态更改游戏语言——Wildness
         LoadConfig("config.bin",LoadConfigComplete);
         
@@ -46,7 +46,8 @@ public class ConfigSystem : AbstractSystem, IConfigSystem
     public void LoadConfig(string cfgName, Action<Config> onLoaded)
     {
         string configPath = Path.Combine(Path.Combine(Application.streamingAssetsPath, "Configs"), cfgName);
-        if(CoroutineController.Instance != null)
+        DebugTool.LogWithHexColor(CoroutineController.Instance);
+        if (CoroutineController.Instance != null)
         {
             CoroutineController.Instance.StartCoroutine(LoadConfigByWWW(configPath, onLoaded));
         }        
@@ -54,13 +55,15 @@ public class ConfigSystem : AbstractSystem, IConfigSystem
 
     private void LoadConfigComplete(Config cfg)
     {
+        DebugTool.LogWithHexColor("LoadConfigComplete");
         // init Data =INDEX(B5:S5,MATCH(MAX(LEN(B5:R5)),LEN(B5:S5),0))
         tableData = cfg;
         SetLanguage(currentLanguage);
     }
 
     IEnumerator LoadConfigByWWW(string filePath, Action<Config> OnLoaded)
-    {        
+    {
+        DebugTool.LogWithHexColor("LoadConfigByWWW");
         var req = UnityEngine.Networking.UnityWebRequest.Get(filePath);
         yield return req.SendWebRequest();
         var stream = new MemoryStream(req.downloadHandler.data);
@@ -94,6 +97,7 @@ public class ConfigSystem : AbstractSystem, IConfigSystem
     {
         currentLanguage = id;
         currentLanguages.Clear();
+        DebugTool.LogWithHexColor(tableData.LanguageData.Count);
         for (int i = 0; i < tableData.LanguageData.Count; i++)
         {
             LanguageDataDefine temp = tableData.LanguageData[i];
@@ -131,7 +135,7 @@ public class ConfigSystem : AbstractSystem, IConfigSystem
         }
         else
         {
-            //Debug.LogError("没有key是 [ " + key + "]   |的翻译");
+            Debug.LogError("没有key是 [ " + key + "]   |的翻译");
             return "";
         }
 
