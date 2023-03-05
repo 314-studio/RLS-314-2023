@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -48,8 +49,6 @@ namespace Src.GridSystem
             else
                 Destroy(gameObject);
 
-            _camera = Camera.main;
-
             halfCellSize = _cellSize / 2;
             _size = new Vector2Int(Mathf.FloorToInt(_worldSize.x / _cellSize),
                 Mathf.FloorToInt(_worldSize.y / _cellSize));
@@ -61,42 +60,10 @@ namespace Src.GridSystem
             _gridDict.Add(GridLayer.Default, _defaultGridBase);
         }
 
-        #region Debug
-
-        private void OnDrawGizmos()
+        private void Start()
         {
-            if (!_enableGizmo) return;
-            if (_camera == null) return;
-            if (_gridDict?[GizmoLayer] == null) return;
-
-            Gizmos.color = Color.white;
-            for (var x = 0; x < _size.x; x++)
-            for (var y = 0; y < _size.y; y++)
-            {
-                Gizmos.DrawLine(GetCellLeftBottom(x, y), GetCellLeftBottom(x, y + 1));
-                Gizmos.DrawLine(GetCellLeftBottom(x, y), GetCellLeftBottom(x + 1, y));
-            }
-
-            Gizmos.DrawLine(GetCellLeftBottom(0, _size.y), GetCellLeftBottom(_size.x, _size.y));
-            Gizmos.DrawLine(GetCellLeftBottom(_size.x, 0), GetCellLeftBottom(_size.x, _size.y));
-
-            var cameraTransform = _camera.transform;
-            if (!Physics.Raycast(cameraTransform.position, cameraTransform.forward, out var hit, 100.0f))
-                return;
-            Gizmos.color = Color.blue;
-            Gizmos.DrawSphere(hit.point, 0.04f);
-
-            var gizmosColor = Color.gray;
-            gizmosColor.a = 0.5f;
-            Gizmos.color = gizmosColor;
-            var items = GetAllItems(GizmoLayer);
-
-            foreach (var item in items)
-                Gizmos.DrawCube(item.transform.position,
-                    new Vector3(_cellSize * item.sizeOnGrid.x, 0.1f, _cellSize * item.sizeOnGrid.y));
+            _camera = Camera.main;
         }
-
-        #endregion
 
         private static void SetupInstance()
         {
@@ -121,7 +88,14 @@ namespace Src.GridSystem
                 new Vector2Int(Mathf.FloorToInt(sizeOnGrid.x / 2.0f),
                     Mathf.FloorToInt(sizeOnGrid.y / 2.0f)) -
                 Vector2Int.one + new Vector2Int(sizeOnGrid.x % 2, sizeOnGrid.y % 2));
-            var origin = GetOriginWithOffset(position, offset);
+            // var origin = GetOriginWithOffset(position, offset);
+
+            if (startingGridPosition.x < 0) startingGridPosition.x = 0;
+            if (startingGridPosition.y < 0) startingGridPosition.y = 0;
+            if (startingGridPosition.x + sizeOnGrid.x > _size.x) startingGridPosition.x = _size.x - sizeOnGrid.x;
+            if (startingGridPosition.y + sizeOnGrid.y > _size.y) startingGridPosition.y = _size.y - sizeOnGrid.y;
+
+            var origin = GetOrigin(startingGridPosition, sizeOnGrid);
 
             var overlappedItems = new Dictionary<GridItem, List<Vector2Int>>();
             var itemArray = _gridDict[layer]
@@ -202,6 +176,12 @@ namespace Src.GridSystem
 
         #region Generic Grid Calculation
 
+        public Vector3 GetOrigin(Vector2Int startingCellPosition, Vector2Int sizeOnGrid)
+        {
+            return GetCellLeftBottom(startingCellPosition.x, startingCellPosition.y) +
+                   new Vector3(sizeOnGrid.x / 2.0f, 0, sizeOnGrid.y / 2.0f) * _cellSize;
+        }
+
         public Vector3 GetOrigin(Vector3 position, Vector2Int sizeOnGrid)
         {
             return GetOriginWithOffset(position, CalculateOffset(sizeOnGrid));
@@ -254,6 +234,43 @@ namespace Src.GridSystem
         {
             var gridPosition = GetGridPosition(worldPosition);
             return GetCellOrigin(gridPosition.x, gridPosition.y);
+        }
+
+        #endregion
+
+        #region Debug
+
+        private void OnDrawGizmos()
+        {
+            if (!_enableGizmo) return;
+            if (_camera == null) return;
+            if (_gridDict?[GizmoLayer] == null) return;
+
+            Gizmos.color = Color.white;
+            for (var x = 0; x < _size.x; x++)
+            for (var y = 0; y < _size.y; y++)
+            {
+                Gizmos.DrawLine(GetCellLeftBottom(x, y), GetCellLeftBottom(x, y + 1));
+                Gizmos.DrawLine(GetCellLeftBottom(x, y), GetCellLeftBottom(x + 1, y));
+            }
+
+            Gizmos.DrawLine(GetCellLeftBottom(0, _size.y), GetCellLeftBottom(_size.x, _size.y));
+            Gizmos.DrawLine(GetCellLeftBottom(_size.x, 0), GetCellLeftBottom(_size.x, _size.y));
+
+            var cameraTransform = _camera.transform;
+            if (!Physics.Raycast(cameraTransform.position, cameraTransform.forward, out var hit, 100.0f))
+                return;
+            Gizmos.color = Color.blue;
+            Gizmos.DrawSphere(hit.point, 0.04f);
+
+            var gizmosColor = Color.gray;
+            gizmosColor.a = 0.5f;
+            Gizmos.color = gizmosColor;
+            var items = GetAllItems(GizmoLayer);
+
+            foreach (var item in items)
+                Gizmos.DrawCube(item.transform.position,
+                    new Vector3(_cellSize * item.sizeOnGrid.x, 0.1f, _cellSize * item.sizeOnGrid.y));
         }
 
         #endregion

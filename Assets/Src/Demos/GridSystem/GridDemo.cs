@@ -10,10 +10,10 @@ namespace Src.Demos.GridSystem
         private GridManager _gridManager;
         private GridItem _selectedItem;
 
-        private void Awake()
+        private void Start()
         {
-            _gridManager = GridManager.instance;
             _camera = Camera.main;
+            _gridManager = GridManager.instance;
         }
 
         private void Update()
@@ -83,8 +83,7 @@ namespace Src.Demos.GridSystem
 
             mouseWorldPosition.y = 0;
             Transform selectedItemTransform;
-            (selectedItemTransform = _selectedItem.transform).position =
-                _gridManager.GetOrigin(mouseHit.point, _selectedItem.sizeOnGrid);
+            (selectedItemTransform = _selectedItem.transform).position = availability.origin;
 
             var gizmosColor = Color.green;
             gizmosColor.a = 0.5f;
