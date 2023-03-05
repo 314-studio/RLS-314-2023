@@ -6,13 +6,15 @@ namespace Src.GridSystem
 {
     public class GridItem : MonoBehaviour
     {
-        private readonly GridManager _gridManager = GridManager.Instance;
+        private readonly GridManager _gridManager = GridManager.instance;
         private Vector2Int _startingCellPosition;
 
         [SerializeField] private Vector2Int _sizeOnGrid = new Vector2Int(1, 1);
         [SerializeField] private GridLayer _layer = GridLayer.Default;
 
-        private Vector2Int _posOnGrid = new Vector2Int(-1, -1);
+        private Vector2Int _posOnGrid;
+
+        #region properties
 
         public Vector2Int sizeOnGrid
         {
@@ -20,31 +22,22 @@ namespace Src.GridSystem
             set => _sizeOnGrid = value;
         }
 
+        public Vector2 sizeInWorld => _sizeOnGrid * new Vector2(_gridManager.cellSize, _gridManager.cellSize);
+
         public GridLayer layer
         {
             get => _layer;
             set => _layer = value;
         }
 
-        private void OnDrawGizmos()
-        {
-            if (layer != GridManager.GizmoLayer)
-            {
-                return;
-            }
+        #endregion
 
-            Color gizmosColor = Color.green;
-            gizmosColor.a = 0.5f;
-            Gizmos.color = gizmosColor;
-            Gizmos.DrawCube(transform.position,
-                new Vector3(sizeOnGrid.x * GridManager.CellSize, 0.1f, sizeOnGrid.y * GridManager.CellSize));
-        }
+        #region public methods
 
         public bool PlaceIntoGrid(Vector3 worldPosition)
         {
             var canPlace = _gridManager.PlaceIntoGrid(this, worldPosition, out var availability);
             _startingCellPosition = availability.startingCellPosition;
-            Debug.Log(canPlace);
             return canPlace;
         }
 
@@ -61,19 +54,6 @@ namespace Src.GridSystem
             return canPlace;
         }
 
-        public void ScaleToGridSize()
-        {
-            var size = GetComponent<Renderer>().bounds.size;
-            var localScale = transform.localScale;
-            var scale = new Vector3(sizeOnGrid.x * GridManager.CellSize / size.x * localScale.x,
-                localScale.y,
-                sizeOnGrid.y * GridManager.CellSize / size.z * localScale.z);
-            localScale = scale;
-            transform.localScale = localScale;
-        }
-
-        protected virtual void Init()
-        {
-        }
+        #endregion
     }
 }

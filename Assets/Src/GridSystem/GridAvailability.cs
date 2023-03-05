@@ -23,7 +23,7 @@ namespace Src.GridSystem
             this.startingCellPosition = startingCellPosition;
             this.overlappedItems = overlappedItems;
 
-            _gridManager = GridManager.Instance;
+            _gridManager = GridManager.instance;
         }
     }
 }
