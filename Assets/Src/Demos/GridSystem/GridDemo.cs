@@ -5,9 +5,9 @@ namespace Src.Demos.GridSystem
 {
     public class GridDemo : MonoBehaviour
     {
-        private GridManager _gridManager;
-        private bool _editMode;
         private Camera _camera;
+        private bool _editMode;
+        private GridManager _gridManager;
         private GridItem _selectedItem;
 
         private void Awake()
@@ -41,14 +41,11 @@ namespace Src.Demos.GridSystem
 
                 if (_selectedItem)
                 {
-                    if (_selectedItem.PlaceIntoGrid(hit.point))
-                    {
-                        _selectedItem = null;
-                    }
+                    if (_selectedItem.PlaceIntoGrid(hit.point)) _selectedItem = null;
                 }
                 else
                 {
-                    GridItem item = _gridManager.GetItem(GridLayer.Default, hit.point);
+                    var item = _gridManager.GetItem(GridLayer.Default, hit.point);
                     if (item)
                     {
                         item.RemoveFromGrid();
@@ -57,30 +54,15 @@ namespace Src.Demos.GridSystem
                 }
             }
 
-            if (!_selectedItem)
-            {
-                return;
-            }
+            if (!_selectedItem) return;
 
-            if (Input.GetKeyUp(KeyCode.UpArrow))
-            {
-                _selectedItem.sizeOnGrid += Vector2Int.up;
-            }
+            if (Input.GetKeyUp(KeyCode.UpArrow)) _selectedItem.sizeOnGrid += Vector2Int.up;
 
-            if (Input.GetKeyUp(KeyCode.DownArrow))
-            {
-                _selectedItem.sizeOnGrid += Vector2Int.down;
-            }
+            if (Input.GetKeyUp(KeyCode.DownArrow)) _selectedItem.sizeOnGrid += Vector2Int.down;
 
-            if (Input.GetKeyUp(KeyCode.LeftArrow))
-            {
-                _selectedItem.sizeOnGrid += Vector2Int.left;
-            }
+            if (Input.GetKeyUp(KeyCode.LeftArrow)) _selectedItem.sizeOnGrid += Vector2Int.left;
 
-            if (Input.GetKeyUp(KeyCode.RightArrow))
-            {
-                _selectedItem.sizeOnGrid += Vector2Int.right;
-            }
+            if (Input.GetKeyUp(KeyCode.RightArrow)) _selectedItem.sizeOnGrid += Vector2Int.right;
         }
 
         private void OnDrawGizmos()
@@ -94,13 +76,9 @@ namespace Src.Demos.GridSystem
                 Gizmos.color = Color.red;
                 var items = availability.overlappedItems;
                 foreach (var item in items.Keys)
-                {
-                    foreach (var pos in availability.overlappedItems[item])
-                    {
-                        Gizmos.DrawCube(_gridManager.GetCellOrigin(pos.x, pos.y),
-                            new Vector3(_gridManager.cellSize, 0.1f, _gridManager.cellSize));
-                    }
-                }
+                foreach (var pos in availability.overlappedItems[item])
+                    Gizmos.DrawCube(_gridManager.GetCellOrigin(pos.x, pos.y),
+                        new Vector3(_gridManager.cellSize, 0.1f, _gridManager.cellSize));
             }
 
             mouseWorldPosition.y = 0;
@@ -108,7 +86,7 @@ namespace Src.Demos.GridSystem
             (selectedItemTransform = _selectedItem.transform).position =
                 _gridManager.GetOrigin(mouseHit.point, _selectedItem.sizeOnGrid);
 
-            Color gizmosColor = Color.green;
+            var gizmosColor = Color.green;
             gizmosColor.a = 0.5f;
             Gizmos.color = gizmosColor;
             Gizmos.DrawCube(selectedItemTransform.position,
