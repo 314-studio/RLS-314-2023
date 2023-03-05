@@ -68,7 +68,6 @@ namespace Src.GridSystem
 
         public T[,] GetValueMultiple(int startX, int startY, int expandX, int expandY)
         {
-            // Debug.Log($"start x {startX} y {startY}, expand x {expandX} y {expandY}");
             if (startX < 0 || startY < 0 || expandX < 1 || expandY < 1)
             {
                 return null;
