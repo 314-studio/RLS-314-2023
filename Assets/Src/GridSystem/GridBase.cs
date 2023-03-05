@@ -2,15 +2,15 @@
 
 namespace Src.GridSystem
 {
-    public class Grid<T>
+    public class GridBase<T>
     {
-        private readonly int _width;
-        private readonly int _depth;
         private readonly float _cellSize;
-        private readonly Vector3 _gridLeftBottom;
+        private readonly int _depth;
         private readonly T[,] _gridArray;
-        
-        public Grid(int width, int depth, float cellSize, Vector3 gridLeftBottom)
+        private readonly Vector3 _gridLeftBottom;
+        private readonly int _width;
+
+        public GridBase(int width, int depth, float cellSize, Vector3 gridLeftBottom)
         {
             _width = width;
             _depth = depth;
@@ -18,7 +18,7 @@ namespace Src.GridSystem
             _gridLeftBottom = gridLeftBottom;
             _gridArray = new T[width, depth];
         }
-        
+
         public T[,] GetGridArray()
         {
             return _gridArray;
@@ -29,12 +29,12 @@ namespace Src.GridSystem
             width = _width;
             depth = _depth;
         }
-        
+
         public void SetValue(int x, int y, T value)
         {
             if (x >= 0 && y >= 0 && x < _width && y < _depth) _gridArray[x, y] = value;
         }
-        
+
         public void SetValue(Vector3 worldPosition, T value)
         {
             GetGridPosition(worldPosition, out var x, out var y);
@@ -44,22 +44,17 @@ namespace Src.GridSystem
         public void SetValueMultiple(int startX, int startY, int expendX, int expendY, T value)
         {
             for (var x = 0; x < expendX; x++)
-            {
-                for (var y = 0; y < expendY; y++)
-                {
-                    SetValue(x + startX, y + startY, value);
-                }
-            }
+            for (var y = 0; y < expendY; y++)
+                SetValue(x + startX, y + startY, value);
         }
-        
+
         public T GetValue(int x, int y)
         {
             if (x >= 0 && y >= 0 && x < _width && y < _depth)
                 return _gridArray[x, y];
-            else
-                return default;
+            return default;
         }
-        
+
         public T GetValue(Vector3 worldPosition)
         {
             GetGridPosition(worldPosition, out var x, out var y);
@@ -68,22 +63,15 @@ namespace Src.GridSystem
 
         public T[,] GetValueMultiple(int startX, int startY, int expandX, int expandY)
         {
-            if (startX < 0 || startY < 0 || expandX < 1 || expandY < 1)
-            {
-                return null;
-            }
-            T[,] tArray = new T[expandX, expandY];
+            if (startX < 0 || startY < 0 || expandX < 1 || expandY < 1) return null;
+            var tArray = new T[expandX, expandY];
             for (var x = 0; x < expandX; x++)
-            {
-                for (var y = 0; y < expandY; y++)
-                {
-                    tArray[x, y] = GetValue(x + startX, y + startY);
-                }
-            }
+            for (var y = 0; y < expandY; y++)
+                tArray[x, y] = GetValue(x + startX, y + startY);
 
             return tArray;
         }
-        
+
         public void GetGridPosition(Vector3 worldPosition, out int x, out int y)
         {
             x = Mathf.FloorToInt((worldPosition - _gridLeftBottom).x / _cellSize);

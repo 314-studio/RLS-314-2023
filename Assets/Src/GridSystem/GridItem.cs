@@ -1,25 +1,25 @@
-using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Src.GridSystem
 {
     public class GridItem : MonoBehaviour
     {
-        private readonly GridManager _gridManager = GridManager.instance;
-        private Vector2Int _startingCellPosition;
-
-        [SerializeField] private Vector2Int _sizeOnGrid = new Vector2Int(1, 1);
+        [SerializeField] private Vector2Int _sizeOnGrid = new(1, 1);
         [SerializeField] private GridLayer _layer = GridLayer.Default;
+        private readonly GridManager _gridManager = GridManager.instance;
 
         private Vector2Int _posOnGrid;
+        private Vector2Int _startingCellPosition;
 
         #region properties
 
         public Vector2Int sizeOnGrid
         {
             get => _sizeOnGrid;
-            set => _sizeOnGrid = value;
+            set
+            {
+                if (value is { x: > 0, y: > 0 }) _sizeOnGrid = value;
+            }
         }
 
         public Vector2 sizeInWorld => _sizeOnGrid * new Vector2(_gridManager.cellSize, _gridManager.cellSize);
