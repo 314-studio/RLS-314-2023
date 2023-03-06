@@ -1,7 +1,7 @@
-using Src.GridSystem;
+using GridSystem;
 using UnityEngine;
 
-namespace Src.Demos.GridSystem
+namespace Demos.GridSystem
 {
     public class GridDemo : MonoBehaviour
     {

@@ -1,4 +1,4 @@
-namespace Src.GridSystem
+namespace GridSystem
 {
     public enum GridLayer
     {
