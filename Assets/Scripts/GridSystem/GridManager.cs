@@ -1,9 +1,8 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace Src.GridSystem
+namespace GridSystem
 {
     public class GridManager : MonoBehaviour
     {

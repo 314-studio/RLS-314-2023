@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Src.GridSystem
+namespace GridSystem
 {
     public class GridItem : MonoBehaviour
     {
