@@ -1,4 +1,4 @@
-name: RLS-314-2023 CI/CD
+name: build/automations
 
 on:
   create:

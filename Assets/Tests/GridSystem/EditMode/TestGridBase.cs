@@ -9,9 +9,9 @@ namespace Tests.GridSystem.EditMode
     public class TestGridBase
     {
         private GridBase<int> _intGrid;
-        private readonly  int _width = 20;
+        private readonly int _width = 20;
         private readonly int _depth = 20;
-        private readonly  float _cellSize = 0.5f;
+        private readonly float _cellSize = 0.5f;
         private readonly Vector3 _leftBottom = Vector3.zero;
 
         [SetUp]
@@ -62,7 +62,7 @@ namespace Tests.GridSystem.EditMode
             _intGrid.SetValue(point, value);
             Assert.AreEqual(_intGrid.gridArray[x, y], value);
         }
-        
+
         [Test]
         public void Test_SetValueByWorldPositionOutOfBoundsShouldNotThrowError()
         {
@@ -117,7 +117,7 @@ namespace Tests.GridSystem.EditMode
             Assert.AreEqual(expandX * expandY, intArray.Length);
             Assert.AreEqual(value, _intGrid.GetValue(x, y));
             Assert.AreEqual(value, _intGrid.gridArray[x, y]);
-            Assert.AreNotEqual(value, _intGrid.gridArray[x -1, y -1]);
+            Assert.AreNotEqual(value, _intGrid.gridArray[x - 1, y - 1]);
             Assert.AreNotEqual(value, _intGrid.GetValue(x - 1, y - 1));
         }
 
@@ -149,4 +149,3 @@ namespace Tests.GridSystem.EditMode
         }
     }
 }
-
