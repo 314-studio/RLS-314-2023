@@ -9,6 +9,8 @@ namespace GridSystem
         private readonly T[,] _gridArray;
         private readonly Vector3 _gridLeftBottom;
         private readonly int _width;
+        
+        public T[,] gridArray => _gridArray;
 
         public GridBase(int width, int depth, float cellSize, Vector3 gridLeftBottom)
         {
@@ -17,11 +19,6 @@ namespace GridSystem
             _cellSize = cellSize;
             _gridLeftBottom = gridLeftBottom;
             _gridArray = new T[width, depth];
-        }
-
-        public T[,] GetGridArray()
-        {
-            return _gridArray;
         }
 
         public void GetGridSize(out int width, out int depth)
@@ -41,10 +38,10 @@ namespace GridSystem
             SetValue(x, y, value);
         }
 
-        public void SetValueMultiple(int startX, int startY, int expendX, int expendY, T value)
+        public void SetValueMultiple(int startX, int startY, int expandX, int expandY, T value)
         {
-            for (var x = 0; x < expendX; x++)
-            for (var y = 0; y < expendY; y++)
+            for (var x = 0; x < expandX; x++)
+            for (var y = 0; y < expandY; y++)
                 SetValue(x + startX, y + startY, value);
         }
 
