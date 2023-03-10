@@ -64,6 +64,9 @@ sysinfo.txt
 *.unitypackage
 *.app
 
+# Code coverage report
+/CodeCoverage
+
 # Crashlytics generated file
 crashlytics-build.properties
 

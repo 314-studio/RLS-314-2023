@@ -6,3 +6,7 @@
 # @314-studio/314-studio will be requested for
 # review when someone opens a pull request.
 *       @314-studio/314-studio
+
+# Grid System
+*/Assets/Scripts/GridSystem/ @Sunbvert
+*/Assets/Tests/GridSystem/ @Sunbvert
