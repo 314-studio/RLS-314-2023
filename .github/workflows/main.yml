@@ -1,9 +1,6 @@
-name: RLS-314-2023 CI/CD
+name: build
 
 on:
-  create:
-    branches:
-    - RLS-*
   pull_request:
     branches:
     - master
@@ -12,8 +9,11 @@ env:
  BRANCH_NAME: ${{ github.head_ref || github.ref_name }} 
 
 jobs:
+  test:
+    uses: ./.github/workflows/test.yml
+    secrets: inherit
   build:
-    if: github.event_name == 'pull_request'
+    needs: test
     name: Build for ${{ matrix.targetPlatform }}
     runs-on: ubuntu-latest
     outputs:
@@ -35,8 +35,10 @@ jobs:
         run: echo "BRANCH_NAME_N=${BRANCH_NAME//\//-}" >> $GITHUB_ENV
       - uses: actions/checkout@v2
         with:
-          fetch-depth: 0
+          fetch-depth: 1
           lfs: true
+      # - name: Checkout LFS objects
+      #   run: git lfs pull
       - uses: actions/cache@v2
         with:
           path: Library
@@ -49,6 +51,7 @@ jobs:
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
+          unityVersion: 2021.3.16f1
           targetPlatform: ${{ matrix.targetPlatform }}
           versioning: Semantic
           buildName: ${{ env.BRANCH_NAME_N }}
@@ -69,10 +72,7 @@ jobs:
             ${{ secrets.M2M_314_WORKFLOW_URL_BASE }}/upload  
   
   task-automation:
-    needs: [build]
-    if: |
-      always() && 
-      (needs.build.result == 'success' || needs.test-1.result == 'skipped')
+    needs: build
     runs-on: ubuntu-latest
     name: Post Task Automation
     steps:
