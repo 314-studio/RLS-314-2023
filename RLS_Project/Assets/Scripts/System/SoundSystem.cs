@@ -14,7 +14,8 @@ public class SoundSystem : AbstractSystem, ISoundSystem {
         DebugTool.LogWithHexColor("播放了声音");
     }
 
-    protected override void OnInit() {
+    protected override void OnInit() 
+    {
         
     }
 }
