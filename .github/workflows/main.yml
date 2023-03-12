@@ -1,9 +1,6 @@
-name: RLS-314-2023 CI/CD
+name: build
 
 on:
-  create:
-    branches:
-    - RLS-*
   pull_request:
     branches:
     - master
@@ -12,8 +9,11 @@ env:
  BRANCH_NAME: ${{ github.head_ref || github.ref_name }} 
 
 jobs:
+  test:
+    uses: ./.github/workflows/test.yml
+    secrets: inherit
   build:
-    if: github.event_name == 'pull_request'
+    needs: test
     name: Build for ${{ matrix.targetPlatform }}
     runs-on: ubuntu-latest
     outputs:
@@ -73,9 +73,6 @@ jobs:
   
   task-automation:
     needs: build
-    if: |
-      always() && 
-      (needs.build.result == 'success' || needs.build.result == 'skipped')
     runs-on: ubuntu-latest
     name: Post Task Automation
     steps:
