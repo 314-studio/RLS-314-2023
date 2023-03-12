@@ -35,19 +35,6 @@ jobs:
           githubToken: ${{ secrets.GITHUB_TOKEN }}
           checkName: ${{ matrix.testMode }} Test Results
           coverageOptions: 'generateAdditionalMetrics;generateHtmlReport;generateBadgeReport;assemblyFilters:+Scripts.*'
-      - name: Upload coverage badge
-        run: |
-          if [ -d ./${{ steps.tests.outputs.coveragePath }} ]
-          then
-            curl \
-              -X POST \
-              -H "Content-Type: multipart/form-data" \
-              -H "x-api-key: ${{ secrets.M2M_314_AUTOMATION_SECRET }}" \
-              -F 'file=@"${{ steps.tests.outputs.coveragePath }}\Report\badge_linecoverage.svg"' \
-              ${{ secrets.M2M_314_WORKFLOW_URL_BASE }}/upload  
-          else 
-          	echo "Directory ${{ steps.tests.outputs.coveragePath }} does not exists"
-          fi
       - uses: actions/upload-artifact@v2
         if: always()
         with:
