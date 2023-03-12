@@ -1,4 +1,4 @@
-name: branch automation
+name: automations
 
 on:
   create:

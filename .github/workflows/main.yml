@@ -73,9 +73,6 @@ jobs:
   
   task-automation:
     needs: build
-    if: |
-      always() && 
-      (needs.build.result == 'success' || needs.build.result == 'skipped')
     runs-on: ubuntu-latest
     name: Post Task Automation
     steps:
