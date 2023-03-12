@@ -29,7 +29,7 @@ namespace Config
 
     public delegate void DeserializeHandler<T>(T ins, DataReader reader);
 
-    public class DataReader
+    public class DataReader : IDisposable
     {
         BinaryReader _reader;
         long _boundPos;        
@@ -213,6 +213,10 @@ namespace Config
 
             return element;
         }
-        
+
+        public void Dispose()
+        {
+            _reader?.Dispose();
+        }
     }
 }
