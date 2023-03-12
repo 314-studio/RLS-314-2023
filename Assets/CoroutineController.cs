@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class CoroutineController : MonoBehaviour
 {
-    public static CoroutineController Instance = null;
+    public static CoroutineController Instance;
 
     private void Awake()
     {

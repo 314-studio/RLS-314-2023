@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public partial class CameraController : MonoBehaviour
+public class CameraController : MonoBehaviour
 {
 	public Transform m_lookAt;
 	public float m_speed = 10.0f;
